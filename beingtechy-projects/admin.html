@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin — Beingtechy Projects</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23e5482d'/><text x='16' y='21' font-family='monospace' font-size='14' font-weight='700' fill='white' text-anchor='middle'>bt</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/style.css" />
+  <style>
+    [hidden] { display: none !important; }
+    .pill { font-family: var(--mono); font-size: 11px; padding: 3px 8px; border-radius: 6px; background: var(--accent); color: #fff; font-weight: 600; letter-spacing: .05em; }
+    .top-actions { display: flex; gap: 8px; align-items: center; }
+
+    /* Login */
+    .login { min-height: 70vh; display: grid; place-items: center; padding: 20px 0; }
+    .login-card { width: min(380px, 100%); background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 28px; box-shadow: var(--shadow); display: grid; gap: 16px; }
+    .login-card h1 { margin: 0; font-size: 28px; letter-spacing: -0.03em; }
+    .login-card p { margin: -8px 0 0; color: var(--ink-3); font-size: 14px; }
+    .err { color: var(--paid); font-size: 14px; min-height: 1.2em; }
+
+    /* Dashboard */
+    .banner { border: 1px solid var(--freemium); background: var(--freemium-bg); color: var(--ink); border-radius: 12px; padding: 12px 14px; font-size: 14px; margin-bottom: 18px; }
+    .banner b { color: var(--freemium); }
+    .dash { display: grid; gap: 24px; grid-template-columns: 1fr; padding-bottom: 60px; }
+    @media (min-width: 960px) { .dash { grid-template-columns: 1fr 420px; align-items: start; } .editor { position: sticky; top: 16px; } }
+    .panel { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); min-width: 0; }
+    .panel-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+    .panel-head h2 { margin: 0; font-size: 18px; letter-spacing: -0.02em; }
+
+    .rows { list-style: none; margin: 0; padding: 6px; }
+    .row { display: grid; grid-template-columns: 112px 1fr auto; gap: 14px; align-items: center; padding: 10px; border-radius: 12px; }
+    .row + .row { border-top: 1px solid var(--line); border-radius: 0; }
+    .row.editing { background: var(--paper-2); border-radius: 12px; }
+    .row .frame { border-radius: 7px; }
+    .row .frame-bar { height: 12px; padding: 0 5px; gap: 3px; }
+    .row .frame-bar i { width: 4px; height: 4px; }
+    .row .frame-url, .row .shot-loading { display: none; }
+    .row .shot-fallback b { font-size: 22px; } .row .shot-fallback span { display: none; }
+    .row-main { min-width: 0; }
+    .row-title { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .row-title b { font-size: 16px; letter-spacing: -0.01em; }
+    .row-url { color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; margin-top: 2px; text-decoration: none; }
+    .row-url:hover { color: var(--accent); }
+    .row-actions { display: flex; gap: 4px; }
+    .row-actions .icon-btn { width: 32px; height: 32px; border-radius: 8px; }
+    .row-actions .icon-btn svg { width: 15px; height: 15px; }
+    .row-actions .del:hover { color: var(--paid); border-color: var(--paid); }
+    @media (max-width: 560px) {
+      .row { grid-template-columns: 80px 1fr; }
+      .row-actions { grid-column: 1 / -1; justify-content: flex-end; }
+    }
+    .empty-rows { padding: 40px 20px; text-align: center; color: var(--ink-3); }
+
+    form { padding: 18px; display: grid; gap: 16px; }
+    .url-row { display: flex; gap: 8px; }
+    .url-row .input { flex: 1; min-width: 0; }
+    .preview { padding: 18px 18px 0; }
+    .preview-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 12px; }
+    .preview-meta b { font-size: 18px; letter-spacing: -0.02em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .check { display: flex; gap: 10px; align-items: center; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .check input { width: 18px; height: 18px; accent-color: var(--accent); }
+    .form-actions { display: flex; gap: 8px; justify-content: flex-end; padding-top: 4px; border-top: 1px solid var(--line); padding-top: 16px; }
+    .thumb-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <a class="brand" href="/"><span class="brand-mark">bt</span> Beingtechy <span class="pill">ADMIN</span></a>
+      <div class="top-actions">
+        <a class="btn btn-ghost btn-sm" href="/" target="_blank">View site ↗</a>
+        <button class="btn btn-ghost btn-sm" id="logout" type="button" hidden>Log out</button>
+        <button class="icon-btn" id="theme" type="button"></button>
+      </div>
+    </header>
+
+    <!-- Login -->
+    <section class="login" id="login-view" hidden>
+      <form class="login-card" id="login-form">
+        <h1>Welcome back</h1>
+        <p>Enter your admin password to manage projects.</p>
+        <div class="field">
+          <label for="pw">Password</label>
+          <input class="input" id="pw" type="password" autocomplete="current-password" required autofocus />
+        </div>
+        <div class="err" id="login-err" role="alert"></div>
+        <button class="btn btn-primary" type="submit">Log in</button>
+      </form>
+    </section>
+
+    <!-- Dashboard -->
+    <section id="dash-view" hidden>
+      <div class="banner" id="seed-banner" hidden>
+        <b>Read-only mode.</b> No database is connected yet, so changes can't be saved.
+        In Vercel, open your project → <b>Storage</b> → add <b>Upstash Redis</b>, connect it, and redeploy.
+      </div>
+
+      <div class="dash">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Projects <span class="mono" id="count" style="color:var(--ink-3)"></span></h2>
+            <button class="btn btn-accent btn-sm" id="new-btn" type="button">+ Add project</button>
+          </div>
+          <ul class="rows" id="rows"></ul>
+        </div>
+
+        <aside class="panel editor" id="editor">
+          <div class="panel-head">
+            <h2 id="form-title">Add project</h2>
+            <span class="mono" style="color:var(--ink-3)">live preview</span>
+          </div>
+          <div class="preview">
+            <div id="preview-frame"></div>
+            <div class="preview-meta">
+              <b id="pv-name">Project name</b>
+              <span class="badge badge-free" id="pv-badge">Free</span>
+            </div>
+          </div>
+          <form id="form" novalidate>
+            <div class="field">
+              <label for="f-url">Website URL *</label>
+              <div class="url-row">
+                <input class="input" id="f-url" type="url" placeholder="https://myapp.beingtechy.org" required />
+                <button class="btn btn-sm" id="autofill" type="button" title="Read name & description from the site" style="height:auto">Auto-fill</button>
+              </div>
+              <span class="hint">The thumbnail is a live screenshot of this website.</span>
+            </div>
+            <div class="field">
+              <label for="f-name">Name *</label>
+              <input class="input" id="f-name" maxlength="80" required />
+            </div>
+            <div class="field">
+              <label for="f-desc">Short description</label>
+              <textarea class="textarea" id="f-desc" maxlength="400" placeholder="What does it do, in one or two lines?"></textarea>
+            </div>
+            <div class="field">
+              <label>Pricing</label>
+              <div class="seg" id="f-pricing">
+                <button type="button" data-v="free" aria-pressed="true">Free</button>
+                <button type="button" data-v="freemium" aria-pressed="false">Freemium</button>
+                <button type="button" data-v="paid" aria-pressed="false">Paid</button>
+              </div>
+            </div>
+            <div class="field" id="price-field" hidden>
+              <label for="f-price">Price label</label>
+              <input class="input" id="f-price" maxlength="40" placeholder="e.g. $9/mo · AED 29 · Pro from $5" />
+            </div>
+            <div class="field">
+              <label for="f-tags">Tags</label>
+              <input class="input" id="f-tags" placeholder="Events, QR, SaaS" />
+              <span class="hint">Comma separated, up to 8.</span>
+            </div>
+            <div class="field">
+              <label for="f-thumb">Custom thumbnail URL <span style="font-weight:400;color:var(--ink-3)">(optional)</span></label>
+              <input class="input" id="f-thumb" type="url" placeholder="Leave empty to use the website screenshot" />
+              <div class="thumb-row">
+                <button class="btn btn-sm" id="refresh-shot" type="button">↻ Refresh screenshot</button>
+                <span class="hint">New sites can take ~15 s for the first screenshot.</span>
+              </div>
+            </div>
+            <label class="check"><input type="checkbox" id="f-featured" /> Feature this project (shown large at the top)</label>
+            <div class="form-actions">
+              <button class="btn btn-ghost" id="cancel" type="button" hidden>Cancel</button>
+              <button class="btn btn-primary" id="save" type="submit">Add project</button>
+            </div>
+          </form>
+        </aside>
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="/assets/admin.js"></script>
+</body>
+</html>
